@@ -2,7 +2,7 @@ import os
 import requests
 from pathlib import Path
 
-#.env enne ei töötanud korrektselt
+#.env enne ei töötanud korrektselt, seega lihtne käsitsi laadimine
 env_path = Path(__file__).resolve().parents[1] / ".env"
 
 #loeme ridade kaupa
@@ -16,6 +16,7 @@ if env_path.exists():
 
 BASE = "https://api.rawg.io/api"
 
+#Abifunktsioon GET päringute tegemiseks RAWG API-le
 def _get(path, params=None):
     if params is None:
         params = {}

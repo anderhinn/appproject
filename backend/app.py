@@ -1,5 +1,10 @@
 import streamlit as st
 
+#Projekt Fano
+#Rakenduse nimi: OnlyGamers
+#Autorid: Ander Hinn, Milena Nikishina
+#Allikatest praegu on kasutatud RAWG API (https://rawg.io/apidocs); Streamlit (https://streamlit.io) ja Claude AI (https://claude.ai) vigade leidmiseks.
+
 #Rakenduse avaleht
 st.markdown('''
 <style>
