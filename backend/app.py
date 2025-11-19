@@ -2,10 +2,11 @@ import streamlit as st
 
 st.markdown('''
 <style>
+
 h1 {
+    
     color: #ACEC00 !important;
     text-align: center;
-    white-space:pre-line
 }
 p {
     color: #BCEC00 !important;
