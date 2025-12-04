@@ -79,6 +79,6 @@ if st.button('Logi sisse'):
                 andmed=lae()
                 
                 if nimi in andmed:
-                    st.switch_page('pages/01_Mangud.py')
+                    st.switch_page('pages/app.py')
         
 

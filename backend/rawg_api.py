@@ -12,7 +12,9 @@ if env_path.exists():
             line = line.strip()
             if line and not line.startswith('#') and '=' in line:
                 key, value = line.split('=', 1)
-                os.environ[key.strip()] = value.strip()
+                key=key.strip()
+                value = value.split('#', 1)[0].strip().strip('"').strip("'")
+                os.environ[key] = value
 
 BASE = "https://api.rawg.io/api"
 
