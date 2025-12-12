@@ -65,7 +65,7 @@ except ValueError:
 except Exception as e:
     st.error(f"Viga mängu andmete laadimisel: {str(e)}")
 
-#Tagasi nupp
+#Tagasinupp
 if st.button("Tagasi mängude lehele"):
     if category:
         st.query_params.update(cat=category, page="1")

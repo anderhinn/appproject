@@ -9,6 +9,9 @@ if str(backend_path) not in sys.path:
     sys.path.insert(0, str(backend_path))
 
 import rawg_api as rawg
+import firebase_api as fb
+#fb on uus moodul et töötata Firebase'iga ja mitte kasutada liiga palju koodi otse siin lehel
+
 
 #Lehe seadistamine ja pealkiri
 st.set_page_config(page_title="Mängud", page_icon="🎮", layout="centered")
@@ -68,6 +71,10 @@ else:
     st.error("Tundmatu kategooria.")
     st.stop()
 
+current_user = st.session_state.get("user_id")
+if not current_user:
+    st.info("Tiimikaaslaste otsimiseks palun logige sisse.")
+
 #Iga mängu kaardi kuvamine: nimi, pilt, release date, rating ja lühikirjeldus
 for game in games:
     with st.container(border=True):
@@ -93,6 +100,50 @@ for game in games:
                 st.write(description[:1500] + ("..." if len(description) > 1500 else ""))
         except Exception as e:
             pass
+
+        game_id = str(game.get("id"))
+        game_name = game.get("name", "Mäng")
+
+        if current_user:
+            note = st.text_input(
+                f"Jäta märkus selle mängu kohta (roll, rating, millal mängid)", 
+                key=f"note_{game_id}",
+                placeholder="Näiteks: support, mängin õhtuti, rank: Guardian"
+            )
+            if st.button("Otsin tiimikaaslasi", key=f"lfg_{game_id}"):
+                try:
+                    username= st.session_state.get("username")
+                    if not username:
+                        try:
+                            import json
+                            with open("auth/kasutajad.json", "r", encoding="utf-8") as f:
+                                users=json.load(f)
+                            username=users.get(current_user, {}).get("personame")
+                        except Exception:
+                            username=None
+                    if not username:
+                        username="Tundmatu kasutaja"
+
+                    fb.add_lfg(
+                        user_id=current_user,
+                        username=username,
+                        game_id=game_id,
+                        game_name=game_name,
+                        note=note,
+                    )
+                    st.success("Oled lisatud tiimikaaslaste otsijate nimekirja!")
+                except Exception as e:
+                    st.error(f"LFG lisamine Firebase'i nurjus: {e}")
+        else:
+            st.caption("Tiimikaaslaste otsimiseks palun logi sisse.")
+        
+        if st.button("Vaata, kes otsib tiimikaaslasi", key=f"vaata_{game_id}"):
+            st.session_state["lfg_game_id"]= game_id
+            st.session_state["lfg_game_name"]= game_name
+            st.session_state["auto_load_lfg"]= True
+            st.switch_page("pages/03_LookingForGroup.py")
+
+
         #see koht hetkel ei tööta korralikult, kuna leht 02_GameInfo.py on arendamisel
         if st.button("Otsi", key=f"otsi_{game['id']}"):
             st.query_params.update(cat=estonian_cat, game_id=game['id'])
