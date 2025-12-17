@@ -36,7 +36,7 @@ def lae():
 def salvestame(andmed: dict):
     # Salvestame kasutajate andmed faili JSON-kujul
     with open(USERS_FILE, 'w', encoding='utf-8') as f:
-        json.dump(andmed, f, indent=4, ensure_ascii=False) #indent teeb sõnastiku 'tulpadeks'. ensure_ascii Väga oluline eesti keele jaoks.
+        json.dump(andmed, f, indent=4, ensure_ascii=False) #indent teeb sõnastiku 'tulpadeks'. ensure_ascii Väga oluline eesti keele jaoks. Allikas Chat GPT
 
 
 
