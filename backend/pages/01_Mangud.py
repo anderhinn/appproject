@@ -3,7 +3,7 @@ import re
 import sys
 from pathlib import Path
 
-#Lisame backend kataloogi sys.path-i (igaks juhuks, enne rawg_api'ga esines probleeme), et importimine töötaks korrektselt
+#Lisame backend kataloogi sys.path-i (igaks juhuks, enne rawg_api'ga esines probleeme), et importimine töötaks korrektselt pages/ alt
 backend_path = Path(__file__).resolve().parent.parent
 if str(backend_path) not in sys.path:
     sys.path.insert(0, str(backend_path))
@@ -38,6 +38,7 @@ CAT_MAP = {
     "Ellujäämismängud": "survival",
 }
 
+#URList võetakse cat ja page, et teha lehitsemist
 params = st.query_params
 estonian_cat = (params.get("cat") or "").strip() #Kategooria eesti keeles
 page=int(params.get("page") or 1) #Lehe number
@@ -57,6 +58,7 @@ with left:
 
 st.caption(f"Valitud kategooria: **{estonian_cat}** (leht {page})")
 
+#Võtame RAWG žanri slugi
 genre_slug = CAT_MAP.get(estonian_cat)
 
 #Kui žanr on kehtiv, küsime mängud RAWG API-st
@@ -71,6 +73,7 @@ else:
     st.error("Tundmatu kategooria.")
     st.stop()
 
+#Praegune kasutaja sessioonist (steamid)
 current_user = st.session_state.get("user_id")
 if not current_user:
     st.info("Tiimikaaslaste otsimiseks palun logige sisse.")
@@ -101,18 +104,26 @@ for game in games:
         except Exception as e:
             pass
 
+        #Mängu id ja nimi
         game_id = str(game.get("id"))
         game_name = game.get("name", "Mäng")
 
+        #LFG plokk ainult siis, kui kasutaja on sisse loginud
         if current_user:
+            #Roll, rank või muu märkus
             note = st.text_input(
                 f"Jäta märkus selle mängu kohta (roll, rating, millal mängid)", 
                 key=f"note_{game_id}",
                 placeholder="Näiteks: support, mängin õhtuti, rank: Guardian"
             )
+
+            #Lisame LFG kirje Firebase'i
             if st.button("Otsin tiimikaaslasi", key=f"lfg_{game_id}"):
                 try:
+                    #Proovime võtta nick sessioonist
                     username= st.session_state.get("username")
+                    
+                    #Kui sessioonis pole, proovime failist võtta (fallback)
                     if not username:
                         try:
                             import json
@@ -121,6 +132,7 @@ for game in games:
                             username=users.get(current_user, {}).get("personame")
                         except Exception:
                             username=None
+                    #Kui ikka pole, paneme vaikimisi
                     if not username:
                         username="Tundmatu kasutaja"
 
@@ -137,6 +149,8 @@ for game in games:
         else:
             st.caption("Tiimikaaslaste otsimiseks palun logi sisse.")
         
+        #Avame LFG nimekirja valitud mängu jaoks
+        #Vaata nupp salvestab valitud mängu session_state sisse ja viil LFG-list lehele
         if st.button("Vaata, kes otsib tiimikaaslasi", key=f"vaata_{game_id}"):
             st.session_state["lfg_game_id"]= game_id
             st.session_state["lfg_game_name"]= game_name
@@ -144,9 +158,7 @@ for game in games:
             st.switch_page("pages/03_LookingForGroup.py")
 
 
-        #see koht hetkel ei tööta korralikult, kuna leht 02_GameInfo.py on arendamisel
-        
-
+#Lehe vahetus
 with right:
     if st.button("Järgmine leht"):
         st.query_params.update(cat=estonian_cat, page=str(page + 1))
