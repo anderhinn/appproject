@@ -44,7 +44,7 @@ page=int(params.get("page") or 1) #Lehe number
 
 #Kui kategooria puudub, palume kasutajal valida kategooria samal leheküljel
 if not estonian_cat or estonian_cat not in CAT_MAP:
-    st.info("Valitud kategooria puudub. Palun valige kategooria eelmises lehes.")
+    
     estonian_cat=st.selectbox("Vali kategooria:", list(CAT_MAP.keys()))
     if not estonian_cat:
         st.stop()
@@ -53,7 +53,7 @@ if not estonian_cat or estonian_cat not in CAT_MAP:
 left, _, right=st.columns([1,4,1])
 with left:
     if st.button("Eelnev leht"):
-        st.switch_page("app.py")
+        st.switch_page("pages/app.py")
 
 st.caption(f"Valitud kategooria: **{estonian_cat}** (leht {page})")
 
@@ -145,9 +145,7 @@ for game in games:
 
 
         #see koht hetkel ei tööta korralikult, kuna leht 02_GameInfo.py on arendamisel
-        if st.button("Otsi", key=f"otsi_{game['id']}"):
-            st.query_params.update(cat=estonian_cat, game_id=game['id'])
-            st.switch_page("pages/02_GameInfo.py")
+        
 
 with right:
     if st.button("Järgmine leht"):

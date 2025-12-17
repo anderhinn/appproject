@@ -1,5 +1,6 @@
 import streamlit as st
 from dotenv import load_dotenv
+from auth.steam_login import saame_nimi_steamidst, saame_steamid
 load_dotenv()
 
 #Projekt Fano
@@ -23,32 +24,28 @@ p {
 </style>
 ''', unsafe_allow_html= True)
 
+steam_input= st.session_state.get("user_id")
+
+if not steam_input:
+    st.error("Steam link puudub. Palun logi sisse.")
+    st.stop()
+
+steamid=saame_steamid(steam_input)
+info= saame_nimi_steamidst(steamid)
+nimi=info["personame"]
 
 
-st.title('Valige kategooriad')
+st.title(f'Tere tulemast, {nimi}!')
 
-categories = [
-    "Tulistamismängud",
-    "Mälurimängud",
-    "Seiklusmängud",
-    "Strateegiamängud",
-    "Spordimängud",
-    "Õudusmängud",
-    "Simulaatorid",
-    "MMO-mängud",
-    "Liivakastimängud",
-    "Ellujäämismängud",
-]
+
+
 
 #Streamlit sessiooni seisundi kasutamine valitud kategooria salvestamiseks
 if 'selected_category' not in st.session_state:
     st.session_state.selected_category = None
 
-for i, cat in enumerate(categories, start=1):
-    with st.container(border=True):
-        st.subheader(cat)
-        st.write(f"Otsib:")
-        if st.button("Otsi", key=f"otsing_{i}"):
-            st.session_state.selected_category = cat
-            st.query_params.update(cat=cat, page="1")
+with st.container():
+    _, mid, _ = st.columns([3, 2, 3])
+    with mid:
+        if st.button("Vali kategooria 🎮", use_container_width=True):
             st.switch_page("pages/01_Mangud.py")

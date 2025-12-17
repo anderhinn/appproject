@@ -1,6 +1,22 @@
 import streamlit as st
 import sys
 from pathlib import Path
+PATTERN_URL = "https://www.transparenttextures.com/patterns/xv.png"
+
+st.markdown('''
+<style>
+
+h1 {
+    
+    color: #ACEC00 !important;
+    text-align: center;
+}
+p {
+    color: #BCEC00 !important;
+    }
+
+</style>
+''', unsafe_allow_html= True)
 
 backend_path= Path(__file__).resolve().parent.parent
 if str(backend_path) not in sys.path:
@@ -40,7 +56,7 @@ chat_id=make_chat_id(me_id, other_id)
 col1,col2 = st.columns([1, 1])
 with col1:
     if st.button("Tagasi LFG listi"):
-        st.switch_page("pages/03_LookingForGroup")
+        st.switch_page("pages/03_LookingForGroup.py")
 
 with col2:
     if st.button("Värskenda"):

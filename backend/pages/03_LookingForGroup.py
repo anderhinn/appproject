@@ -2,6 +2,22 @@ import streamlit as st
 import sys
 from pathlib import Path
 
+st.markdown('''
+<style>
+
+h1 {
+    
+    color: #ACEC00 !important;
+    text-align: center;
+}
+p {
+    color: #BCEC00 !important;
+    }
+
+</style>
+''', unsafe_allow_html= True)
+
+
 backend_path= Path(__file__).resolve().parent.parent
 if str(backend_path) not in sys.path:
     sys.path.insert(0, str(backend_path))

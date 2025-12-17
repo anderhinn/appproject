@@ -14,9 +14,13 @@ def salvesta_kasutajad(kasutajad:dict):
     with open(fail, 'w', encoding='utf-8') as f:
         json.dump(kasutajad, f, indent=2, ensure_ascii=False)
 
-def leia_voi_lisa_kasutaja(steamid:str, nimi:str | None=None):
+def leia_voi_lisa_kasutaja(nimi:str, steamid:str | None=None):
     kasutajad= lae_kasutajad()
     if steamid not in kasutajad:
         kasutajad[steamid]= {"nimi" : nimi or steamid}
         salvesta_kasutajad(kasutajad)
+    else:
+        if nimi and kasutajad[steamid].get("nimi") != nimi:
+            kasutajad[steamid]["nimi"] = nimi
+            salvesta_kasutajad(kasutajad)
     return kasutajad[steamid]    
